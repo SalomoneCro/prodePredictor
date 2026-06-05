@@ -1,0 +1,20 @@
+# Entorno virtual
+.venv/
+
+# Secretos
+.env
+kaggle.json
+
+# Config local de Claude
+.claude/settings.local.json
+
+# Datos descargados
+data/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Salidas de exploración
+figures/

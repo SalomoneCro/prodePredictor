@@ -1,0 +1,7 @@
+pandas
+kaggle
+matplotlib
+seaborn
+jupyter
+scipy
+statsmodels
