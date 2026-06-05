@@ -5,13 +5,14 @@ de partidos de selecciones. Construido originalmente para el **prode del Mundial
 (fase de grupos), pero el núcleo es **reutilizable para cualquier prode** cambiando solo
 las reglas de puntaje.
 
-## Estado: `v1.0-base-model` (congelado)
-Modelo base **validado** por backtesting temporal. Resultados con hiperparámetros default:
+## Estado: modelo validado + tuneado (Etapa 4a)
+Modelo Dixon-Coles **validado** por backtesting temporal (`v1.0-base-model` fue el freeze
+sin tuning). Hiperparámetros tuneados: vida media decay = 3 años, amistosos a peso completo.
 
 | Backtest | PTS/partido (modelo) | PTS/partido (baseline) | acc 1X2 | exacto |
 |---|---|---|---|---|
-| Mundiales 2014/18/22 (grupos, n=144) | **2.125** | 1.417 | 56.9% | 13.9% |
-| Competitivos 2018-2025 (n=5564) | **2.254** | 1.732 | 61.5% | 14.0% |
+| Mundiales 2014/18/22 (grupos, n=144) | **2.229** | 1.417 | 59.7% | 14.6% |
+| Competitivos 2018-2025 (n=5564) | **2.266** | 1.732 | 61.5% | 14.1% |
 
 ## Estructura
 | Archivo | Qué hace |

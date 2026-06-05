@@ -17,8 +17,9 @@ DATA = Path(__file__).parent / "data"
 CUTOFF = pd.Timestamp("2026-06-04")          # hoy: separa jugados de fixtures
 HOSTS = {"Mexico", "United States", "Canada"}  # anfitriones (juegan de local)
 
-# Pesos por competitividad del torneo (tuneables en Etapa 4).
-W_FRIENDLY = 0.5
+# Pesos por competitividad del torneo. W_FRIENDLY=1.0 tras el tuning de Etapa 4:
+# bajarle peso a los amistosos empeoraba (son señal útil + puente inter-confederación).
+W_FRIENDLY = 1.0
 W_QUALIFIER = 0.9
 W_MAJOR = 1.0
 W_OTHER = 0.7

@@ -23,8 +23,8 @@ import statsmodels.api as sm
 
 from features import load_data, time_weight
 
-# Hiperparámetros por defecto (se tunean en Etapa 4)
-HALF_LIFE_DAYS = 730.0      # vida media del decay (~2 años)
+# Hiperparámetros por defecto (tuneados en Etapa 4 vía tune.py)
+HALF_LIFE_DAYS = 1095.0     # vida media del decay (~3 años)
 TRAIN_WINDOW_YEARS = 12     # ventana de entrenamiento (con decay lo viejo pesa ~0)
 MIN_MATCHES = 8             # mínimo de partidos en ventana para incluir a un equipo
 MAX_GOALS = 10              # truncado de la matriz de marcadores
@@ -41,7 +41,8 @@ class DixonColes:
 
     # ---- ajuste ----
     def fit(self, history, cutoff, half_life_days=HALF_LIFE_DAYS,
-            window_years=TRAIN_WINDOW_YEARS, min_matches=MIN_MATCHES, verbose=True):
+            window_years=TRAIN_WINDOW_YEARS, min_matches=MIN_MATCHES,
+            friendly_weight=None, verbose=True):
         cutoff = pd.Timestamp(cutoff)
         start = cutoff - pd.DateOffset(years=window_years)
         df = history[(history["date"] <= cutoff) & (history["date"] >= start)
@@ -53,8 +54,11 @@ class DixonColes:
         df = df[df["home_team"].isin(eligible) & df["away_team"].isin(eligible)].copy()
         self.teams = eligible
 
-        # peso = decay temporal × competitividad
-        df["w"] = time_weight(df["date"], cutoff, half_life_days) * df["comp_weight"]
+        # peso = decay temporal × competitividad (con override opcional de amistosos)
+        cw = df["comp_weight"]
+        if friendly_weight is not None:
+            cw = cw.where(~df["is_friendly"], friendly_weight)
+        df["w"] = time_weight(df["date"], cutoff, half_life_days) * cw
 
         # formato largo: cada partido -> 2 observaciones (ataque/defensa)
         home_obs = pd.DataFrame({
@@ -90,14 +94,14 @@ class DixonColes:
             self.att.setdefault(t, 0.0)
             self.deff.setdefault(t, 0.0)
 
-        self._fit_rho(df, half_life_days, cutoff)
+        self._fit_rho(df)
         if verbose:
             print(f"  μ(intercept)={self.intercept:.3f}  γ(localía)={self.gamma:.3f}  "
                   f"ρ(DC)={self.rho:.4f}")
         return self
 
-    def _fit_rho(self, df, half_life_days, cutoff):
-        """ρ por verosimilitud perfilada sobre marcadores bajos."""
+    def _fit_rho(self, df):
+        """ρ por verosimilitud perfilada sobre marcadores bajos (usa df['w'])."""
         lh = np.exp(self.intercept + df["home_team"].map(self.att).fillna(0)
                     + df["away_team"].map(self.deff).fillna(0)
                     + self.gamma * df["home_advantage"]).values
@@ -105,7 +109,7 @@ class DixonColes:
                     + df["home_team"].map(self.deff).fillna(0)).values
         x = df["home_score"].values
         y = df["away_score"].values
-        w = (time_weight(df["date"], cutoff, half_life_days) * df["comp_weight"]).values
+        w = df["w"].values
 
         m00 = (x == 0) & (y == 0)
         m01 = (x == 0) & (y == 1)
