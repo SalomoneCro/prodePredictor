@@ -186,6 +186,65 @@ def best_bet(M, pts_exact=6.0, pts_outcome=3.0):
     return int(i), int(j), float(EV[i, j])
 
 
+def closeness_index(a, b, i, j):
+    """CI = |dif_goles_pick − dif_goles_real| + |goles_tot_pick − goles_tot_real| / 2.
+
+    Pick (a-b) vs marcador real (i-j). Se considera "close" si CI <= 1.5 (y además
+    se acertó el ganador/empate). Regla del prode 2026.
+    """
+    return abs((a - b) - (i - j)) + abs((a + b) - (i + j)) / 2.0
+
+
+def ci_points(a, b, i, j, p_exact=3.0, p_close=1.5, p_result=1.0, ci_thresh=1.5):
+    """Puntos que da el pick (a-b) si el marcador real es (i-j), con las reglas 2026.
+
+    3 exacto / 1.5 acierto-de-ganador-y-close / 1 acierto-de-ganador / 0 errar.
+    El exacto NO se suma al resto (lo reemplaza).
+    """
+    if a == i and b == j:
+        return p_exact
+    same_outcome = np.sign(a - b) == np.sign(i - j)
+    if not same_outcome:
+        return 0.0
+    if closeness_index(a, b, i, j) <= ci_thresh:
+        return p_close
+    return p_result
+
+
+def best_bet_ci(M, p_exact=3.0, p_close=1.5, p_result=1.0, ci_thresh=1.5):
+    """Jugada que maximiza los puntos esperados bajo las reglas del prode 2026.
+
+        EV(pick) = Σ_{marcadores reales r} P(r) · puntos(pick, r)
+
+    A diferencia de `best_bet`, hay un escalón intermedio ("close") que premia quedar
+    cerca, así que no se reduce a dos constantes: se suma sobre toda la matriz de
+    marcadores. Devuelve (i, j, EV, p_exact_hit, p_close_or_better, p_result_or_better).
+    """
+    n = M.shape[0]
+    ii, jj = np.meshgrid(np.arange(n), np.arange(n), indexing="ij")
+    gd_real, tot_real = ii - jj, ii + jj
+    best = (-1.0, 0, 0)
+    detail = (0.0, 0.0, 0.0)
+    for a in range(n):
+        for b in range(n):
+            ci = np.abs((a - b) - gd_real) + np.abs((a + b) - tot_real) / 2.0
+            same = np.sign(a - b) == np.sign(gd_real)
+            is_exact = (ii == a) & (jj == b)
+            is_close = same & (ci <= ci_thresh) & ~is_exact
+            is_res = same & (ci > ci_thresh) & ~is_exact
+            pts = np.where(is_exact, p_exact,
+                           np.where(is_close, p_close,
+                                    np.where(is_res, p_result, 0.0)))
+            ev = float((M * pts).sum())
+            if ev > best[0]:
+                best = (ev, a, b)
+                detail = (float(M[a, b]),
+                          float((M * (is_exact | is_close)).sum()),
+                          float((M * same).sum()))
+    ev, a, b = best
+    return a, b, ev, detail[0], detail[1], detail[2]
+
+
 if __name__ == "__main__":
     history, fixtures = load_data()
     model = DixonColes().fit(history, cutoff="2026-06-04")
