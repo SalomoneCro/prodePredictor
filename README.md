@@ -72,7 +72,7 @@ Evaluated over $i,j \in \lbrace 0,\dots,10 \rbrace$ and renormalised, this gives
 $M$ — the joint distribution of the final scoreline. Everything downstream (1X2
 probabilities, the optimal bet) is read off $M$ analytically, with no Monte Carlo:
 
-$$P(\text{home win}) = \sum_{i>j} M_{ij}, \qquad P(\text{draw}) = \sum_{i} M_{ii}, \qquad P(\text{away win}) = \sum_{i<j} M_{ij}$$
+$$P(\text{home win}) = \sum_{i \gt j} M_{ij}, \qquad P(\text{draw}) = \sum_{i} M_{ii}, \qquad P(\text{away win}) = \sum_{i \lt j} M_{ij}$$
 
 ## How it is trained
 
