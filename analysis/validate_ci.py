@@ -7,8 +7,8 @@
 import numpy as np
 import pandas as pd
 
-from features import load_data
-from model import DixonColes, best_bet_ci, ci_points, closeness_index, most_likely_score
+from prode.features import load_data
+from prode.model import DixonColes, best_bet_ci, ci_points, closeness_index, most_likely_score
 
 
 # ---------- 1) tests del reglamento ----------

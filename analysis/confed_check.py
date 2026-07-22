@@ -5,7 +5,7 @@ los att/def en una escala común?
 from pathlib import Path
 import pandas as pd
 
-DATA = Path(__file__).parent / "data"
+from prode import DATA_DIR as DATA
 
 QUALIFIED = {
     "UEFA": ["England", "France", "Croatia", "Norway", "Portugal", "Germany",

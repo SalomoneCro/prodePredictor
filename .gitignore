@@ -1,20 +1,25 @@
-# Entorno virtual
+# Virtual environment
 .venv/
 
-# Secretos
+# Secrets
 .env
 kaggle.json
 
-# Config local de Claude
+# Local Claude config
 .claude/settings.local.json
 
-# Datos descargados
-data/
+# Downloaded Kaggle datasets (large; fetched via scripts/download_data.py).
+# The hand-maintained World Cup 2026 overlay IS versioned.
+data/*
+!data/wc2026.csv
 
 # Python
 __pycache__/
 *.pyc
+*.egg-info/
 .ipynb_checkpoints/
+build/
+dist/
 
-# Salidas de exploración
+# Exploration figures
 figures/

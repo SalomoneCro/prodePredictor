@@ -8,8 +8,8 @@ mirando si el modelo tiene sesgos sistemáticos en el rolling backtest:
 import numpy as np
 import pandas as pd
 
-from features import load_data
-from model import DixonColes, outcome_probs
+from prode.features import load_data
+from prode.model import DixonColes, outcome_probs
 
 CONFS = ["UEFA", "CONMEBOL", "CONCACAF", "CAF", "AFC", "OFC"]
 

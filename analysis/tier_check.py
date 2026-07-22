@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-DATA = Path(__file__).parent / "data"
+from prode import DATA_DIR as DATA
 r = pd.read_csv(DATA / "results.csv", parse_dates=["date"]).dropna(subset=["home_score"])
 r = r[r["date"] >= "2014-01-01"].copy()
 

@@ -12,8 +12,8 @@ accuracy 1X2 y % de marcador exacto. Se compara el modelo contra baselines.
 import numpy as np
 import pandas as pd
 
-from features import load_data
-from model import DixonColes, outcome_probs, best_bet
+from prode.features import load_data
+from prode.model import DixonColes, outcome_probs, best_bet
 
 EPS = 1e-12
 

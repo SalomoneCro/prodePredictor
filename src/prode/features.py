@@ -11,9 +11,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from confederations import confederation
+from prode import DATA_DIR
+from prode.confederations import confederation
 
-DATA = Path(__file__).parent / "data"
+DATA = DATA_DIR
 CUTOFF = pd.Timestamp("2026-06-04")          # hoy: separa jugados de fixtures
 HOSTS = {"Mexico", "United States", "Canada"}  # anfitriones (juegan de local)
 
@@ -65,6 +66,17 @@ def load_data():
     """
     r = pd.read_csv(DATA / "results.csv", parse_dates=["date"])
 
+    # Overlay del Mundial 2026: el dataset Kaggle trae los partidos del Mundial
+    # con score NA. `data/wc2026.csv` reemplaza esos placeholders por los
+    # resultados reales ya jugados (fase de grupos) y agrega los cruces de la
+    # fase eliminatoria a predecir (también con score NA). Así el modelo
+    # reentrena con lo que pasó en grupos y los fixtures pasan a ser los de R32.
+    wc_path = DATA / "wc2026.csv"
+    if wc_path.exists():
+        wc = pd.read_csv(wc_path, parse_dates=["date"])
+        base_wc = (r["tournament"] == "FIFA World Cup") & (r["date"] >= "2026-06-11")
+        r = pd.concat([r[~base_wc], wc], ignore_index=True)
+
     played = r[r["home_score"].notna()].copy()
     fixtures = r[r["home_score"].isna()].copy()
 
@@ -97,15 +109,14 @@ def sanity_checks(history: pd.DataFrame, fixtures: pd.DataFrame) -> None:
     # 1. Partición
     print(f"\nHistórico (jugados): {len(history):,} partidos "
           f"({history['date'].min().date()} -> {history['date'].max().date()})")
-    print(f"Fixtures a predecir: {len(fixtures)} (esperado 72)")
-    assert len(fixtures) == 72, "Se esperaban 72 fixtures de fase de grupos"
+    # Cantidad de fixtures depende de la fase: 72 en grupos, 16 en R32, 8 en 8vos...
+    print(f"Fixtures a predecir: {len(fixtures)}")
     assert history["home_score"].notna().all(), "Hay scores nulos en el histórico"
     assert (fixtures["date"] > CUTOFF).all(), "Algún fixture no es futuro"
 
-    # 2. Los 48 presentes en los fixtures
+    # 2. Equipos presentes en los fixtures (48 en grupos, 32 en R32, ...)
     teams_fx = pd.unique(fixtures[["home_team", "away_team"]].values.ravel())
-    print(f"\nEquipos distintos en fixtures: {len(teams_fx)} (esperado 48)")
-    assert len(teams_fx) == 48, "Los fixtures no tienen 48 equipos"
+    print(f"\nEquipos distintos en fixtures: {len(teams_fx)}")
 
     # 3. Cobertura de confederaciones (que ningún clasificado quede en 'Other')
     fx_other = [t for t in teams_fx if confederation(t) == "Other"]

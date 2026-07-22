@@ -1,7 +1,7 @@
 """Confirma en el WC backtest (escenario neutral) los candidatos del tuning."""
 import pandas as pd
-from features import load_data
-from model import DixonColes
+from prode.features import load_data
+from prode.model import DixonColes
 from validate import evaluate
 
 history, _ = load_data()

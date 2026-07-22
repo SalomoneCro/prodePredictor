@@ -9,8 +9,8 @@ import pandas as pd
 pd.set_option("display.max_rows", 200)
 pd.set_option("display.width", 140)
 
-DATA = Path(__file__).parent / "data"
-FIG = Path(__file__).parent / "figures"
+from prode import DATA_DIR as DATA, FIGURES_DIR as FIG
+
 FIG.mkdir(exist_ok=True)
 
 # --- Los 48 clasificados al Mundial 2026 (confirmados, incl. repechajes mar-2026) ---

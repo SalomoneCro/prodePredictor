@@ -6,8 +6,9 @@ el dataset en ./data
 import os
 from pathlib import Path
 
+from prode import DATA_DIR, PROJECT_ROOT
+
 DATASET = "martj42/international-football-results-from-1872-to-2017"
-DATA_DIR = Path(__file__).parent / "data"
 
 
 def load_env(env_path: Path) -> None:
@@ -23,7 +24,7 @@ def load_env(env_path: Path) -> None:
 
 
 def main() -> None:
-    load_env(Path(__file__).parent / ".env")
+    load_env(PROJECT_ROOT / ".env")
 
     if not os.environ.get("KAGGLE_USERNAME") or not os.environ.get("KAGGLE_KEY"):
         raise SystemExit(

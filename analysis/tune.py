@@ -7,8 +7,8 @@ Métrica secundaria: RPS. Cada config reentrena por año (sin fuga).
 import numpy as np
 import pandas as pd
 
-from features import load_data
-from model import DixonColes, outcome_probs, best_bet
+from prode.features import load_data
+from prode.model import DixonColes, outcome_probs, best_bet
 from validate import prode_points, rps
 
 YEARS = range(2018, 2026)

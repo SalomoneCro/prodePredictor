@@ -21,7 +21,7 @@ from scipy.optimize import minimize_scalar
 from scipy.stats import poisson
 import statsmodels.api as sm
 
-from features import load_data, time_weight
+from prode.features import load_data, time_weight
 
 # Hiperparámetros por defecto (tuneados en Etapa 4 vía tune.py)
 HALF_LIFE_DAYS = 1095.0     # vida media del decay (~3 años)

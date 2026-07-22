@@ -9,10 +9,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from features import load_data
-from model import DixonColes, outcome_probs, most_likely_score, best_bet_ci
+from prode import PREDICTIONS_DIR
+from prode.features import load_data
+from prode.model import DixonColes, outcome_probs, most_likely_score, best_bet_ci
 
-OUT = Path(__file__).parent / "predictions_2026.csv"
+PREDICTIONS_DIR.mkdir(exist_ok=True)
+OUT = PREDICTIONS_DIR / "predictions_2026.csv"
 
 
 def top_scores(M, k=3):

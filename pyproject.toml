@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prode-predictor"
+version = "1.2.0"
+description = "A Dixon–Coles goal model for the 2026 FIFA World Cup prediction pool (prode)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "statsmodels",
+]
+
+[project.optional-dependencies]
+# Exploratory analysis, tuning and validation scripts under analysis/
+analysis = ["matplotlib", "seaborn", "jupyter"]
+# Kaggle dataset download (scripts/download_data.py)
+data = ["kaggle"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
