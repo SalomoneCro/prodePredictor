@@ -64,11 +64,11 @@ $$
 \end{cases}
 $$
 
-The full probability of a scoreline $i$–$j$ is then
+The full probability of the scoreline $i\text{-}j$ is then
 
 $$P(\text{home}=i,\ \text{away}=j) = P_{\text{Pois}}(i;\lambda_H)\ P_{\text{Pois}}(j;\lambda_A)\ \tau_{\lambda_H,\lambda_A}(i,j)$$
 
-Evaluated over $i,j \in \{0,\dots,10\}$ and renormalised, this gives a **score matrix**
+Evaluated over $i,j \in \lbrace 0,\dots,10 \rbrace$ and renormalised, this gives a **score matrix**
 $M$ — the joint distribution of the final scoreline. Everything downstream (1X2
 probabilities, the optimal bet) is read off $M$ analytically, with no Monte Carlo:
 
@@ -116,7 +116,7 @@ is an intermediate "close" tier, the expected value is summed over the whole mat
 
 $$\text{EV}(\text{pick}) = \sum_{r} P(r)\ \text{points}(\text{pick}, r)$$
 
-A pick $a$–$b$ is "close" to a real score $i$–$j$ when the outcome is right **and**
+A pick $a\text{-}b$ is "close" to a real score $i\text{-}j$ when the outcome is right **and**
 
 $$\text{CI}(a\text{-}b,\ i\text{-}j) = \big|(a-b)-(i-j)\big| + \tfrac{1}{2}\big|(a+b)-(i+j)\big| \le 1.5$$
 
